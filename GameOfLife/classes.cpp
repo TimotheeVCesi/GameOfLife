@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 class Cell {
 private:
@@ -17,6 +19,24 @@ class Grid {
 private:
     int rows, columns;
     std::vector<std::vector<Cell>> grid;
+
+    // méthode à modifier pour grille torique
+    int countAliveNeighbors(int x, int y) const {
+        int count = 0;
+        for (int dx = -1; dx <= 1; ++dx) {
+            for (int dy = -1; dy <= 1; ++dy) {
+                if (dx == 0 && dy == 0) continue;
+
+                int nx = x + dx, ny = y + dy;
+                if (nx >= 0 && nx < rows && ny >= 0 && ny < cols) {
+                    if (grid[nx][ny].isAlive()) {
+                        ++count;
+                    }
+                }
+            }
+        }
+        return count;
+    }
 
 public:
     Grid(int r, int c) : rows(r), columns(c), grid(r, std::vector<Cell>(c)) {}
@@ -59,8 +79,11 @@ public:
     GameOfLife(int rows, int columns) : grid(rows, columns) {}
 
     void start(int generations) {
+        grid.initializeGrid();
         for (int i = 0; i < generations; i++) {
-
+            grid.display();
+            grid.update();
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
     }
 };
