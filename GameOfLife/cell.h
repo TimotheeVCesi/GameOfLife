@@ -9,3 +9,7 @@ public:
 
     void setAlive(bool state) { alive = state; }
 };
+
+class CellObstacle {
+
+};
