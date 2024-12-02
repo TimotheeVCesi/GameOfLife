@@ -19,14 +19,13 @@ void config(std::string& fileName, std::string& mode, std::string& gridType, int
 
 int main() {
     std::string fileName, mode, gridType;
-    int generations, sleepTime, rows, columns;
+    int generations, sleepTime;
 
     config(fileName, mode, gridType, generations, sleepTime);
-    inputFile(fileName, rows, columns);
 
-    GameOfLife simulation(fileName, mode, gridType, generations, sleepTime, rows, columns);
+    GameOfLife simulation(fileName, mode, gridType, generations, sleepTime);
 
-    simulation.start(generations);
+    simulation.start();
 
     return 0;
 }

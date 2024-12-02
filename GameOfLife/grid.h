@@ -12,23 +12,6 @@ public:
     Grid();
     ~Grid();
 
-    void inputFile() {
-        std::ifstream file(fileName);
-        if (!file) {
-            std::cerr << "Erreur: impossible d'ouvrir le fichier " << fileName << std::endl;
-        }
-
-        file >> rows >> columns;
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                file >> grid[i][j];
-            }
-        }
-
-        file.close();
-    }
-
     void initializeGrid();
     void updateGrid();
 };
