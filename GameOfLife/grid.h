@@ -1,74 +1,4 @@
 class Grid {
-private:
-    int rows, columns;
-    std::vector<std::vector<Cell>> grid;
-
-    // méthode à modifier pour grille torique
-    int countAliveNeighbors(int x, int y) const {
-        int count = 0;
-        for (int dx = -1; dx <= 1; ++dx) {
-            for (int dy = -1; dy <= 1; ++dy) {
-                if (dx == 0 && dy == 0) continue;
-
-                int nx = x + dx, ny = y + dy;
-                if (nx >= 0 && nx < rows && ny >= 0 && ny < columns) {
-                    if (grid[nx][ny].isAlive()) {
-                        ++count;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-public:
-    Grid(int r, int c) : rows(r), columns(c), grid(r, std::vector<Cell>(c)) {}
-
-    void initializeGrid() {
-        std::srand(std::time(0));
-        for (int x = 0; x < gridWidth; ++x) {
-            for (int y = 0; y < gridHeight; ++y) {
-                grid[x][y] = std::rand() % 2;  // Randomly initialize cells as alive or dead
-            }
-        }
-    }
-
-    void renderGrid(sf::RenderWindow &window) {
-        int x, y;
-        
-        window.clear();
-        sf::RectangleShape cell(sf::Vector2f(cellSize - 1.0f, cellSize - 1.0f));
-        for (x = 0; x < gridWidth; ++x) {
-            for (y = 0; y < gridHeight; ++y) {
-                if (grid[x][y] == 1) {
-                    cell.setPosition(x * cellSize, y * cellSize);
-                    window.draw(cell);
-                }
-            }
-        }
-        window.display();
-    }
-
-    void update() {
-        std::vector<std::vector<Cell>> newGrid = grid;
-
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < columns; ++j) {
-                int aliveNeighbors = countAliveNeighbors(i, j);
-
-                if (grid[i][j].isAlive()) {
-                    newGrid[i][j].setAlive(aliveNeighbors == 2 || aliveNeighbors == 3);
-                } else {
-                    newGrid[i][j].setAlive(aliveNeighbors == 3);
-                }
-            }
-        }
-
-        grid = newGrid;
-    }    
-};
-
-class Grid {
 protected:
     const int rows, columns;
     int generations;
@@ -100,7 +30,6 @@ public:
     }
 
     void initializeGrid();
-    void renderGrid();
     void updateGrid();
 };
 
@@ -124,5 +53,49 @@ public:
     GridGraphic();
     ~GridGraphic();
 
-
+    void renderGrid();
 };
+
+
+// int Detection(int i,int j, int n,int m){            //ce sera surement dans une classe Grid
+// // n = gridHeigth, m = gridWidth
+//     //check si c'est premirère u denrière ligne et/ou colonne)
+//     int cell_select = grid[i][j]; 
+//     int compteur = 0;
+
+//     if (i==0){
+//         if (j==0){
+//             compteur = grid[n-1][m-1] + grid[n-1][j] + grid[n-1][j+1] + grid[i][m-1] + grid[i][j+1] + grid[i+1][m-1] + grid[i+1][j] + grid[i+1][j+1];
+//         }
+
+//         else if (j==n-1)
+//         {
+//             compteur = grid[n-1][j-1] + grid[n-1][j] + grid[n-1][0] + grid[i][j-1] + grid[i][0] + grid[i+1][j-1] + grid[i+1][j] + grid[i+1][0];
+//         }
+
+//         else{
+//             compteur = grid[n-1][j-1] + grid[n-1][j] + grid[n-1][j+1] + grid[i][j-1] + grid[i][j+1] + grid[i+1][j-1] + grid[i+1][j] + grid[i+1][j+1];
+//         } 
+//     }
+
+//     else if (i==(n-1))
+//     {
+//         if (j==0){
+//             compteur = grid[i-1][m-1] + grid[i-1][j] + grid[i-1][j+1] + grid[i][m-1] + grid[i][j+1] + grid[0][m-1] + grid[0][j] + grid[0][j+1];
+//         }
+
+//         else if (j==n-1)
+//         {
+//             compteur = grid[i-1][j-1] + grid[i-1][j] + grid[i-1][0] + grid[i][j-1] + grid[i][0] + grid[0][j-1] + grid[0][j] + grid[0][0];
+//         }
+//         else{
+//             compteur = grid[i-1][j-1] + grid[i-1][j] + grid[i-1][j+1] + grid[i][j-1] + grid[i][j+1] + grid[0][j-1] + grid[0][j] + grid[0][j+1];
+//         } 
+//     }
+
+//     else {
+//         compteur = grid[i-1][j-1] + grid[i-1][j] + grid[i-1][j+1] + grid[i][j-1] + grid[i][j+1] + grid[i+1][j-1] + grid[i+1][j] + grid[i+1][j+1];
+//     }
+    
+//     return compteur;    
+// }

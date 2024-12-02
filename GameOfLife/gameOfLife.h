@@ -3,7 +3,7 @@ private:
     Grid grid;
 
 public:
-    GameOfLife(int rows, int columns) : grid(rows, columns) {}
+    GameOfLife(int rows, int columns, int generations) : grid(rows, columns) {}
 
     void start(int generations) {
         grid.initializeGrid();
@@ -14,12 +14,3 @@ public:
         }
     }
 };
-
-int mainTest() {
-    int rows, columns, generations;
-
-    GameOfLife game(rows, columns);
-    game.start(generations);
-
-    return 0;
-}

@@ -1,6 +1,6 @@
 #include "headers.h"
 
-void config(std::string& fileName, std::string& mode, std::string& grid, int& generations, int& sleepTime) {
+void config(std::string& fileName, std::string& mode, std::string& gridType, int& generations, int& sleepTime) {
     std::cout << "Entrez le chemin d'accès au fichier d'entrée (/dossier/dossier/fichier.txt) :" << std::endl;
     std::cin >> fileName;
 
@@ -8,7 +8,7 @@ void config(std::string& fileName, std::string& mode, std::string& grid, int& ge
     std::cin >> mode;
 
     std::cout << "Entrez le type de grille ('classique' ou 'torique') :" << std::endl;
-    std::cin >> grid;
+    std::cin >> gridType;
 
     std::cout << "Entrez le nombre de générations maximum (entier non nul et non signé) :" << std::endl;
     std::cin >> generations;
@@ -17,24 +17,14 @@ void config(std::string& fileName, std::string& mode, std::string& grid, int& ge
     std::cin >> sleepTime;
 }
 
-void inputFile(std::string fileName, int& rows, int& columns) {
-    std::ifstream file(fileName);
-    if (!file) {
-        std::cerr << "Erreur: impossible d'ouvrir le fichier " << fileName << std::endl;
-    }
-
-    file >> rows >> columns;
-    file.close();
-}
-
 int main() {
-    std::string fileName, mode, grid;
+    std::string fileName, mode, gridType;
     int generations, sleepTime, rows, columns;
 
-    config(fileName, mode, grid, generations, sleepTime);
+    config(fileName, mode, gridType, generations, sleepTime);
     inputFile(fileName, rows, columns);
 
-    GameOfLife simulation;
+    GameOfLife simulation(fileName, mode, gridType, generations, sleepTime, rows, columns);
 
     simulation.start(generations);
 
