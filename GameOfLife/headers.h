@@ -9,7 +9,7 @@
 #include <chrono>
 
 #include "gameOfLife.h"
-#include "openFile.h"
+#include "file.h"
 #include "grid.h"
 #include "cell.h"
 #include "view.h"
