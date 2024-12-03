@@ -1,36 +1,54 @@
-class File {
-protected:
-    std::string fileName;
+#ifndef IFILEHANDLER_H
+#define IFILEHANDLER_H
 
+class IFileHandler {
 public:
-    virtual void inputFile(std::string fileName) const = 0;
-    virtual void outputFile(std::string fileName) const = 0;
+    virtual ~IFileHandler() = default;
+    virtual Grid load(const std::string& filename) const = 0;
+    virtual void save(const Grid& grid, const std::string& filename) const = 0;
 };
 
-class GridFile : public File {
-public:
-    std::string inputFile(std:string fileName) const override {
-        ifstream fileIn(fileName, ios::in);
-        if (!fileIn) {
-            std::cerr << "Erreur: impossible d'ouvrir le fichier " << fileName << std::endl;
-            fileIn.close();
-            return;
-        }
+#endif
 
-        std::string dataGrid, dataCell, line;
-        std::getline(fileIn, line);
-        dataGrid << line;
-        while (std::getline(fileIn, line)) {
-            for (char c : line) {
-                if (c != ' ') { // Exclut les espaces
-                    dataCell += c;
-                }
-            }
-        }
-        return dataGrid, dataCell;
-    }
 
-    void outputFile(std::string fileName) const {
-        
-    }
-};
+// class File { // classe abstraite
+// protected:
+//     std::string fileName;
+
+// public:
+//     virtual std::string actionFile() const = 0;
+// };
+
+// class GetDataFile : public File {
+// public:
+//     GetDataFile(std::string fileName) : fileName(fileName) {}
+
+//     std::string actionFile() const override { // ouverture fichier et récup données
+//         ifstream fileIn(fileName, ios::in); // ouverture du fichier
+//         if (!fileIn) { // vérifie si le fichier est correctement ouvert
+//             std::cerr << "Erreur: impossible d'ouvrir le fichier " << fileName << std::endl;
+//             fileIn.close();
+//             return;
+//         }
+
+//         std::string dataGrid, dataCell, line;
+//         std::getline(fileIn, line); // récup 1ère ligne (rows et columns)
+//         dataGrid << line;
+//         while (std::getline(fileIn, line)) { // récup la grille
+//             for (char c : line) {
+//                 if (c != ' ') { // exclut les espaces
+//                     dataCell += c;
+//                 }
+//             }
+//         }
+//         fileIn.close();
+//         return dataGrid, dataCell;
+//     }
+// };
+
+// class SaveDataFile : public File {
+// public:
+//     SaveDataFile(std::string fileName) : fileName(fileName) {}
+
+
+// };

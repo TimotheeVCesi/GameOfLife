@@ -1,15 +1,25 @@
+#ifndef CELL_H
+#define CELL_H
+
+// ajout interface pour diff cell classique et cell obstacle
+
 class Cell {
 private:
-    bool alive;
+    bool isAlive;
 
 public:
-    Cell(bool state = false) : alive(state) {}
+    Cell(bool alive = false) : isAlive(alive) {}
 
-    bool isAlive() const { return alive; }
+    bool isAlive() const { return isAlive; }
+    void setAlive(bool alive) { isAlive = alive; }
 
-    void setAlive(bool state) { alive = state; }
+    void updateState(int aliveNeighbors) {
+        if (isAlive) {
+            isAlive = (aliveNeighbors == 2 || aliveNeighbors == 3);
+        } else {
+            isAlive = (aliveNeighbors == 3);
+        }
+    }
 };
 
-class CellObstacle {
-
-};
+#endif

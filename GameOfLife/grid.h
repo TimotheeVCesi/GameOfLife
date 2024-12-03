@@ -1,43 +1,93 @@
+ #ifndef GRID_H
+ #define GRID_H
+
+// ajout interface pour diff grille classique et grille torique
+
 class Grid {
-protected:
-    const int rows, columns;
-    int generations;
-    std::string fileName;
-    std::vector<std::vector<Cell>> grid(rows, std::vector<Cell>(columns));
-
-    int countAliveNeighbors();
-    int countAliveNeighborsToroidal();
-
-public:
-    Grid();
-    ~Grid();
-
-    void initializeGrid();
-    void updateGrid();
-};
-
-class GridConsole : public Grid {
 private:
+    int rows, columns;
+    std::vector<std::vector<Cell>> grid;
 
 public:
-    GridConsole();
-    ~GridConsole();
+    Grid(int rows, int columns) : rows(rows), columns(columns), grid(rows, std::vector<Cell>(columns)) {}
 
-    void outputFile();
+    int getRows() const { return rows; }
+    int getColumns() const { return columns; }
+
+    void setCellState(int x, int y, bool state) {
+        if (x >= 0 && x < rows && y >= 0 && y < columns) {
+            grid[x][y].setAlive(state);
+        }
+    }
+
+    bool getCellState(int x, int y) const {
+        if (x >= 0 && x < rows && y >= 0 && y < columns) {
+            return grid[x][y].isAlive();
+        }
+        return false;
+    }
+
+    void update() {
+        std::vector<std::vector<Cell>> nextState = grid;
+
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                int neighbors = countAliveNeighbors(i, j);
+                nextState[i][j].updateState(neighbors);
+            }
+        }
+
+        grid = nextState;
+    }
+
+    int countAliveNeighbors(int x, int y) const {
+        // fonction à remplir (grille classique)
+    }
 };
 
-class GridGraphic : public Grid {
-private:
-    const int cellSize;
-    int sleepTime;
-    std::vector<std::vector<int>> grid(gridWidth, std::vector<int>(gridHeight));
+ #endif
 
-public:
-    GridGraphic();
-    ~GridGraphic();
 
-    void renderGrid();
-};
+// class Grid {
+// protected:
+//     const int rows, columns;
+//     int generations;
+//     std::string fileName;
+//     std::vector<std::vector<Cell>> grid(rows, std::vector<Cell>(columns));
+
+//     int countAliveNeighbors();
+//     int countAliveNeighborsToroidal();
+
+// public:
+//     Grid();
+//     ~Grid();
+
+//     void initializeGrid();
+//     void updateGrid();
+// };
+
+// class GridConsole : public Grid {
+// private:
+
+// public:
+//     GridConsole();
+//     ~GridConsole();
+
+//     void outputFile();
+// };
+
+// class GridGraphic : public Grid {
+// private:
+//     const int cellSize;
+//     int sleepTime;
+//     std::vector<std::vector<int>> grid(gridWidth, std::vector<int>(gridHeight));
+
+// public:
+//     GridGraphic();
+//     ~GridGraphic();
+
+//     void renderGrid();
+// };
 
 
 // int Detection(int i,int j, int n,int m){            //ce sera surement dans une classe Grid
