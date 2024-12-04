@@ -5,19 +5,19 @@
 
 class Cell {
 private:
-    bool isAlive;
+    bool state;
 
 public:
-    Cell(bool alive = false) : isAlive(alive) {}
+    Cell(bool alive = false) : state(alive) {}
 
-    bool isAlive() const { return isAlive; }
-    void setAlive(bool alive) { isAlive = alive; }
+    bool isAlive() const { return state; }
+    void setAlive(bool alive) { state = alive; }
 
     void updateState(int aliveNeighbors) {
         if (isAlive) {
-            isAlive = (aliveNeighbors == 2 || aliveNeighbors == 3);
+            state = (aliveNeighbors == 2 || aliveNeighbors == 3);
         } else {
-            isAlive = (aliveNeighbors == 3);
+            state = (aliveNeighbors == 3);
         }
     }
 };

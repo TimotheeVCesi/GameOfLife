@@ -7,6 +7,10 @@
 #include <fstream>
 #include <sstream>
 #include <chrono>
+#include <filesystem>
+#include <stdexcept>
+
+namespace fs = std::filesystem;
 
 #include "gameOfLife.h"
 #include "file.h"

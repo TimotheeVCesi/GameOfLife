@@ -1,5 +1,18 @@
 #include "headers.h"
 
+int main() {
+    std::string filePath;
+    std::cout << "Entrez le chemin d'accès au fichier d'entrée :" << std::endl;
+    std::cin >> filePath;
+
+    GameOfLife simulation(filePath);
+
+    return 0;
+}
+
+
+
+
 void config(std::string& fileName, std::string& mode, std::string& gridType, int& generations, int& sleepTime) {
     std::cout << "Entrez le chemin d'accès au fichier d'entrée (/dossier/dossier/fichier.txt) :" << std::endl;
     std::cin >> fileName;

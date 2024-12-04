@@ -1,12 +1,9 @@
 class GameOfLife {
 private:
-    std::string fileName, mode, gridType;
-    int generations, sleepTime;
-    Grid grid;
+    std::string filePath;
 
 public:
-    GameOfLife(std::string fileName, std::string mode, std::string gridType, int generations, int sleepTime) :
-                fileName(fileName), mode(mode), gridType(gridType), generations(generations), sleepTime(sleepTime) {}
+    GameOfLife(std::string filePath) : filePath(filePath) {}
 
     void start() {
         grid.initializeGrid();
