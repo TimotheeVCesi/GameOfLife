@@ -33,7 +33,7 @@ public:
             }
         }
         window.display();
-    }
+    }x
 
     void update(const Grid& grid) const override {
 

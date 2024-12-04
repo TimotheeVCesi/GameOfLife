@@ -4,14 +4,14 @@
 class IFileHandler {
 public:
     virtual ~IFileHandler() = default;
-    virtual Grid load(const std::string& filename) const = 0;
-    virtual void save(const Grid& grid, const std::string& filename) const = 0;
+    virtual Grid load(const std::string filePath) const = 0;
+    virtual void save(const Grid& grid, const std::string& filePath) const = 0;
 };
 
 class FileHandler : public IFileHandler {
 public:
-    Grid load(const std::string& fileName) const override {
-        std::ifstream file(fileName);
+    Grid load(const std::string filePath) const override {
+        std::ifstream file(filePath);
         if (!file.is_open()) {
             throw std::runtime_error("Unable to open file for loading");
         }
@@ -32,8 +32,8 @@ public:
         return grid;
     }
 
-    void save(const Grid& grid, const std::string& fileName) const override {
-        std::ofstream file(fileName);
+    void save(const Grid& grid, const std::string& filePath) const override {
+        std::ofstream file(filePath);
         if (!file.is_open()) {
             throw std::runtime_error("Unable to open file for saving");
         }

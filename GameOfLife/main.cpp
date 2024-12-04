@@ -7,6 +7,8 @@ int main() {
 
     GameOfLife simulation(filePath);
 
+    simulation.start();
+
     return 0;
 }
 
@@ -30,15 +32,15 @@ void config(std::string& fileName, std::string& mode, std::string& gridType, int
     std::cin >> sleepTime;
 }
 
-int main() {
-    std::string fileName, mode, gridType;
-    int generations, sleepTime;
+// int main() {
+//     std::string fileName, mode, gridType;
+//     int generations, sleepTime;
 
-    config(fileName, mode, gridType, generations, sleepTime);
+//     config(fileName, mode, gridType, generations, sleepTime);
 
-    GameOfLife simulation(fileName, mode, gridType, generations, sleepTime);
+//     GameOfLife simulation(fileName, mode, gridType, generations, sleepTime);
 
-    simulation.start();
+//     simulation.start();
 
-    return 0;
-}
+//     return 0;
+// }
