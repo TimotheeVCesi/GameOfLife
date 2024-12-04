@@ -5,7 +5,7 @@ class IFileHandler {
 public:
     virtual ~IFileHandler() = default;
     virtual Grid load(const std::string filePath) const = 0;
-    virtual void save(const Grid& grid, const std::string& filePath) const = 0;
+    virtual void save(const Grid grid, const std::string filePath) const = 0;
 };
 
 class FileHandler : public IFileHandler {
@@ -13,7 +13,7 @@ public:
     Grid load(const std::string filePath) const override {
         std::ifstream file(filePath);
         if (!file.is_open()) {
-            throw std::runtime_error("Unable to open file for loading");
+            throw std::runtime_error("Erreur: impossible d'ouvrir le fichier pour charger");
         }
 
         int rows, columns;
@@ -32,10 +32,21 @@ public:
         return grid;
     }
 
-    void save(const Grid& grid, const std::string& filePath) const override {
-        std::ofstream file(filePath);
+    void save(const Grid grid, const std::string filePath) const override {
+        // trouver la position du dernier '/'
+        std::size_t pos = filePath.find_last_of('/');
+
+        // extraire le chemin du dossier et le nom du fichier
+        std::string folderPath = filePath.substr(0, pos); // avant le dernier '/'
+        std::string fileName = filePath.substr(pos + 1);  // après le dernier '/'
+        std::string folderName = fileName + "_out";
+
+        mkdir(folderName.c_str(), 0755);
+        std::string OutFilePath = folderPath + "/" + folderName + "/" + "iteration_" + count.to_string(); // A CORRIGER => generation
+
+        std::ofstream file(OutFilePath);
         if (!file.is_open()) {
-            throw std::runtime_error("Unable to open file for saving");
+            throw std::runtime_error("Erreur: impossible d'ouvrir le fichier pour sauvegarder");
         }
 
         file << grid.getRows() << " " << grid.getColumns() << "\n";

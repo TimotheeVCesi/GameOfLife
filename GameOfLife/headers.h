@@ -9,6 +9,7 @@
 #include <chrono>
 #include <filesystem>
 #include <stdexcept>
+#include <sys/stat.h>
 
 namespace fs = std::filesystem;
 

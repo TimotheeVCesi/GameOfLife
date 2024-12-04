@@ -41,7 +41,20 @@ public:
     }
 
     int countAliveNeighbors(int x, int y) const {
-        // fonction à remplir (grille classique)
+        int count = 0;
+        for (int dx = -1; dx <= 1; ++dx) {
+            for (int dy = -1; dy <= 1; ++dy) {
+                if (dx == 0 && dy == 0) continue;
+
+                int nx = x + dx, ny = y + dy;
+                if (nx >= 0 && nx < rows && ny >= 0 && ny < columns) {
+                    if (grid[nx][ny].isAlive()) {
+                        ++count;
+                    }
+                }
+            }
+        }
+        return count;
     }
 };
 

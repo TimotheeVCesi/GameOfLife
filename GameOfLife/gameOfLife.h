@@ -23,12 +23,15 @@ public:
                 view = new ViewConsole();
                 break;
             case 2:
-                view = new ViewGraphic();
+                sf::RenderWindow window(sf::VideoMode(gridWidth * cellSize, gridHeight * cellSize), "Game of Life");
+                view = new ViewGraphic(window);
                 break;
             default:
                 throw std::runtime_error("Erreur: mode non défini");
                 break;
         }
+
+        view->display();
 
         
 
