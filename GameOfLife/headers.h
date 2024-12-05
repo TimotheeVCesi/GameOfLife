@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <sys/stat.h>
+#include <thread>
 
 namespace fs = std::filesystem;
 

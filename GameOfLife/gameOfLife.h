@@ -1,49 +1,24 @@
 #ifndef GOF_H
 #define GOF_H
 
+#include "file.h"
+#include "grid.h"
+#include "view.h"
+
 class GameOfLife {
 private:
-    std::string filePath;
-    IFileHandler* file;
+    IGrid* grid;
     IView* view;
 
 public:
-    GameOfLife(std::string filePath) : filePath(filePath) {}
+    GameOfLife(IGrid* grid, IView* view) : grid(grid), view(view) {}
 
-    void start() {
-        file = new FileHandler();
-        Grid grid = file->load(filePath);
-
-        int mode;
-        std::cout << "Entrez la vue à utiliser (1 pour console ou 2 pour graphique) :" << std::endl;
-        std::cin >> mode;
-
-        switch (mode) {
-            case 1:
-                view = new ViewConsole();
-                break;
-            case 2:
-                sf::RenderWindow window(sf::VideoMode(gridWidth * cellSize, gridHeight * cellSize), "Game of Life");
-                view = new ViewGraphic(window);
-                break;
-            default:
-                throw std::runtime_error("Erreur: mode non défini");
-                break;
+    void run(int iterations, int delayMs) {
+        for (int i = 0; i < iterations; ++i) {
+            view->display(*grid);
+            grid->update();
+            std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
         }
-
-        view->display();
-
-        
-
-
-
-
-
-        // for (int i = 0; i < generations; i++) {
-        //     grid.renderGrid();
-        //     grid.updateGrid();
-        //     std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
-        // }
     }
 };
 

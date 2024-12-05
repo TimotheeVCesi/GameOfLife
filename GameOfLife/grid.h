@@ -1,56 +1,62 @@
  #ifndef GRID_H
  #define GRID_H
 
-// ajout interface pour diff grille classique et grille torique
+#include "cell.h"
 
-class Grid {
+class IGrid {
+public:
+    virtual ~IGrid() = default;
+    virtual int getRows() const = 0;
+    virtual int getColumns() const = 0;
+    virtual void setCellState(int x, int y, bool state) = 0;
+    virtual bool getCellState(int x, int y) const = 0;
+    virtual void update() = 0;
+    virtual int countAliveNeighbors(int x, int y) const = 0;
+};
+
+class GridClassic : public IGrid {
 private:
     int rows, columns;
-    std::vector<std::vector<Cell>> grid;
+    std::vector<std::vector<CellClassic>> grid;
 
 public:
-    Grid(int rows, int columns) : rows(rows), columns(columns), grid(rows, std::vector<Cell>(columns)) {}
+    GridClassic(int rows, int columns) : rows(rows), columns(columns), grid(rows, std::vector<CellClassic>(columns)) {}
 
-    int getRows() const { return rows; }
-    int getColumns() const { return columns; }
+    int getRows() const override { return rows; }
+    int getColumns() const override { return columns; }
 
-    void setCellState(int x, int y, bool state) {
+    void setCellState(int x, int y, bool state) override {
         if (x >= 0 && x < rows && y >= 0 && y < columns) {
             grid[x][y].setAlive(state);
         }
     }
 
-    bool getCellState(int x, int y) const {
+    bool getCellState(int x, int y) const override {
         if (x >= 0 && x < rows && y >= 0 && y < columns) {
             return grid[x][y].isAlive();
         }
         return false;
     }
 
-    void update() {
-        std::vector<std::vector<Cell>> nextState = grid;
-
+    void update() override {
+        auto nextState = grid;
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < columns; ++j) {
                 int neighbors = countAliveNeighbors(i, j);
                 nextState[i][j].updateState(neighbors);
             }
         }
-
         grid = nextState;
     }
 
-    int countAliveNeighbors(int x, int y) const {
+    int countAliveNeighbors(int x, int y) const override {
         int count = 0;
         for (int dx = -1; dx <= 1; ++dx) {
             for (int dy = -1; dy <= 1; ++dy) {
                 if (dx == 0 && dy == 0) continue;
-
                 int nx = x + dx, ny = y + dy;
                 if (nx >= 0 && nx < rows && ny >= 0 && ny < columns) {
-                    if (grid[nx][ny].isAlive()) {
-                        ++count;
-                    }
+                    count += grid[nx][ny].isAlive();
                 }
             }
         }
@@ -58,49 +64,11 @@ public:
     }
 };
 
+class GridToroidal : public IGrid {
+
+};
+
  #endif
-
-
-// class Grid {
-// protected:
-//     const int rows, columns;
-//     int generations;
-//     std::string fileName;
-//     std::vector<std::vector<Cell>> grid(rows, std::vector<Cell>(columns));
-
-//     int countAliveNeighbors();
-//     int countAliveNeighborsToroidal();
-
-// public:
-//     Grid();
-//     ~Grid();
-
-//     void initializeGrid();
-//     void updateGrid();
-// };
-
-// class GridConsole : public Grid {
-// private:
-
-// public:
-//     GridConsole();
-//     ~GridConsole();
-
-//     void outputFile();
-// };
-
-// class GridGraphic : public Grid {
-// private:
-//     const int cellSize;
-//     int sleepTime;
-//     std::vector<std::vector<int>> grid(gridWidth, std::vector<int>(gridHeight));
-
-// public:
-//     GridGraphic();
-//     ~GridGraphic();
-
-//     void renderGrid();
-// };
 
 
 // int Detection(int i,int j, int n,int m){            //ce sera surement dans une classe Grid

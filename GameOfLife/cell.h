@@ -1,25 +1,30 @@
 #ifndef CELL_H
 #define CELL_H
 
-// ajout interface pour diff cell classique et cell obstacle
+class ICell {
+public:
+    virtual ~ICell() = default;
+    virtual bool isAlive() const = 0;
+    virtual void setAlive(bool alive) = 0;
+    virtual void updateState(int aliveNeighbors) = 0;
+};
 
-class Cell {
+class CellClassic : public ICell {
 private:
     bool state;
 
 public:
-    Cell(bool alive = false) : state(alive) {}
+    CellClassic(bool alive = false) : state(alive) {}
 
-    bool isAlive() const { return state; }
-    void setAlive(bool alive) { state = alive; }
-
-    void updateState(int aliveNeighbors) {
-        if (isAlive) {
-            state = (aliveNeighbors == 2 || aliveNeighbors == 3);
-        } else {
-            state = (aliveNeighbors == 3);
-        }
+    bool isAlive() const override { return state; }
+    void setAlive(bool alive) override { state = alive; }
+    void updateState(int aliveNeighbors) override {
+        state = isAlive() ? (aliveNeighbors == 2 || aliveNeighbors == 3) : (aliveNeighbors == 3);
     }
+};
+
+class CellObstacle : public ICell {
+
 };
 
 #endif
