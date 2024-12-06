@@ -23,12 +23,19 @@ public:
 
         int rows, columns;
         file >> rows >> columns;
+        if (file.fail() || rows <= 0 || columns <= 0) {
+            throw std::runtime_error("Erreur: dimensions invalides dans le fichier");
+        }
 
         auto* grid = new GridClassic(rows, columns);
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < columns; ++j) {
                 bool state;
                 file >> state;
+                if (file.fail()) {
+                    delete grid;
+                    throw std::runtime_error("Erreur: données invalides dans le fichier");
+                }
                 grid->setCellState(i, j, state);
             }
         }
