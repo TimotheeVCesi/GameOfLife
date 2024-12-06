@@ -1,8 +1,6 @@
 #ifndef VIEW_H
 #define VIEW_H
 
-#include "grid.h"
-
 class IView {
 public:
     virtual ~IView() = default;
@@ -24,7 +22,7 @@ public:
         for (int x = 0; x < grid.getRows(); x++) {
             for (int y = 0; y < grid.getColumns(); y++) {
                 if (grid.getCellState(x, y)) {
-                    cell.setPosition(x * cellSize, y * cellSize); // inverser x et y ?
+                    cell.setPosition(y * cellSize, x * cellSize);
                     window.draw(cell);
                 }
             }

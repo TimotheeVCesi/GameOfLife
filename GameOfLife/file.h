@@ -6,7 +6,6 @@
 class IFileHandler {
 public:
     virtual ~IFileHandler() = default;
-
     virtual IGrid* load(const std::string& filePath) const = 0;
     virtual void save(const IGrid& grid, const std::string& filePath) const = 0;
 };
@@ -39,16 +38,17 @@ public:
     }
 
     void save(const IGrid& grid, const std::string& filePath) const override {
-        std::size_t pos = filePath.find_last_of('/');
-        std::string folderPath = filePath.substr(0, pos);
-        std::string fileName = filePath.substr(pos + 1);
+        std::size_t posSlash = filePath.find_last_of('/');
+        std::size_t posExt = filePath.find_last_of('.');
+        std::string folderPath = filePath.substr(0, posSlash);
+        std::string fileName = filePath.substr(posSlash + 1, posExt);
         std::string folderName = fileName + "_out";
 
         if (mkdir(folderName.c_str(), 0755) != 0 && errno != EEXIST) {
             throw std::runtime_error("Erreur: impossible de créer le dossier de sauvegarde");
         }
 
-        std::string OutFilePath = folderPath + "/" + folderName + "/iteration_" + std::to_string(count);
+        std::string OutFilePath = folderPath + "/" + folderName + "/iteration_" + std::to_string(count) + ".txt";
 
         std::ofstream file(OutFilePath);
         if (!file.is_open()) {

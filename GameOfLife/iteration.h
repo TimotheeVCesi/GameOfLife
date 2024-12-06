@@ -2,9 +2,13 @@
 #define ITER_H
 
 class IIteration {
-public :
-    virtual ~IIteration() = default;
+protected:
+    int maxGenerations;
+    int currentGeneration;
 
+public :
+    IIteration(int maxGenerations) : maxGenerations(maxGenerations), currentGeneration(0) {}
+    virtual ~IIteration() = default;
     virtual void reset() = 0;
     virtual bool hasReachedLimit() const = 0;
     virtual bool isStable(const IGrid& grid) = 0;
@@ -14,12 +18,10 @@ public :
 
 class IterationClassic : public IIteration {
 private:
-    int maxGenerations;
-    int currentGeneration;
     std::vector<std::vector<bool>> previousState;
 
 public:
-    IterationClassic(int maxGenerations) : maxGenerations(maxGenerations), currentGeneration(0) {}
+    IterationClassic(int maxGenerations) : IIteration(maxGenerations) {}
 
     void reset() override {
         currentGeneration = 0;
