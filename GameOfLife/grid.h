@@ -1,15 +1,15 @@
- #ifndef GRID_H
- #define GRID_H
+#ifndef GRID_H
+#define GRID_H
 
 #include "cell.h"
 
 class IGrid {
 protected:
     int rows, columns;
-    std::vector<std::vector<ICell>> grid;
+    std::vector<std::vector<CellClassic>> grid;
 
 public:
-    IGrid(int rows, int columns) : rows(rows), columns(columns), grid(rows, std::vector<ICell>(columns)) {}
+    IGrid(int rows, int columns) : rows(rows), columns(columns), grid(rows, std::vector<CellClassic>(columns)) {}
     virtual ~IGrid() = default;
 
     virtual int getRows() const = 0;
@@ -98,21 +98,18 @@ public:
     }
 
     int countAliveNeighbors(int x, int y) const override {
-        int n = rows;
-        int m = columns;
-        int compteur = 0;
-
+        int count = 0;
         for (int di = -1; di <= 1; ++di) {
             for (int dj = -1; dj <= 1; ++dj) {
                 if (di == 0 && dj == 0) 
                     continue;
-                int ni = (x + di + n) % n;
-                int nj = (y + dj + m) % m;
-                compteur += grid[ni][nj].isAlive();
+                int ni = (x + di + rows) % rows;
+                int nj = (y + dj + columns) % columns;
+                count += grid[ni][nj].isAlive();
             }
         }
-        return compteur;   
+        return count;   
     }
 };
 
- #endif
+#endif
