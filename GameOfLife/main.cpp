@@ -1,32 +1,73 @@
 #include "headers.h"
 
-void config(std::string& fileName, std::string& mode, std::string& gridType, int& generations, int& sleepTime) {
-    std::cout << "Entrez le chemin d'accès au fichier d'entrée (/dossier/dossier/fichier.txt) :" << std::endl;
-    std::cin >> fileName;
+void inputFile(IFileHandler*& fileHandler) {
+    std::string filePath;
+    std::cout << "Entrez le chemin d'accès au fichier d'entrée :" << std::endl;
+    std::cin >> filePath;
+    fileHandler = new FileHandler(filePath);
+}
 
-    std::cout << "Entrez le mode de fonctionnement ('console' ou 'graphique') :" << std::endl;
-    std::cin >> mode;
-
-    std::cout << "Entrez le type de grille ('classique' ou 'torique') :" << std::endl;
+void configGridType(IGrid*& grid, int rows, int columns) {
+    int gridType;
+    std::cout << "Entrez le type de la grille ('1' pour classique, '2' pour torique) :" << std::endl;
     std::cin >> gridType;
 
-    std::cout << "Entrez le nombre de générations maximum (entier non nul et non signé) :" << std::endl;
-    std::cin >> generations;
+    switch (gridType) {
+        case 1:
+            grid = new GridClassic(rows, columns);
+            break;
+        case 2:
+            grid = new GridToroidal(rows, columns);
+            break;
+        default:
+            std::cerr << "Erreur: entrée inconnue (type de la grille). Grille classique utilisée par défaut." << std::endl;
+            grid = new GridClassic(rows, columns);
+            break;
+    }
+}
 
-    std::cout << "Entrez le temps de pause entre deux générations (entier non nul et non signé) :" << std::endl;
+void configViewType(IView*& view, int& viewType) {
+    std::cout << "Entrez le type de vue ('1' pour console, '2' pour graphique) :" << std::endl;
+    std::cin >> viewType;
+
+    view = new ViewGraphic();
+}
+
+void configVar(IIteration*& iterations, int& sleepTime, int& viewType) {
+    int generations;
+    std::cout << "Entrez le nombre de générations maximum :" << std::endl;
+    std::cin >> generations;
+    iterations = new IterationClassic(generations);
+
+    std::cout << "Entrez le temps de pause entre deux itérations (en ms) :" << std::endl;
     std::cin >> sleepTime;
 }
 
 int main() {
-    std::string fileName, mode, gridType;
-    int generations, sleepTime, rows, columns;
+    IFileHandler* fileHandler = nullptr;
+    inputFile(fileHandler);
 
-    config(fileName, mode, gridType, generations, sleepTime);
-    inputFile(fileName, rows, columns);
+    IGrid* initialGrid = fileHandler->load();
+    
+    IGrid* grid = nullptr;
+    configGridType(grid, initialGrid->getRows(), initialGrid->getColumns());
 
-    GameOfLife simulation(fileName, mode, gridType, generations, sleepTime, rows, columns);
+    IView* view = nullptr;
+    int viewType;
+    configViewType(view, viewType);
 
-    simulation.start(generations);
+    IIteration* iterations = nullptr;
+    int sleepTime;
+    configVar(iterations, sleepTime, viewType);
+
+    GameOfLife game(fileHandler, initialGrid, view, iterations, viewType);
+    game.run(sleepTime);
+
+    delete fileHandler;
+    delete initialGrid;
+    delete grid;
+    delete view;
+    delete iterations;
 
     return 0;
 }

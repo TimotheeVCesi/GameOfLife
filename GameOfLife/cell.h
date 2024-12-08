@@ -1,15 +1,36 @@
-class Cell {
-private:
-    bool alive;
+#ifndef CELL_H
+#define CELL_H
+
+class ICell {
+protected:
+    bool state;
 
 public:
-    Cell(bool state = false) : alive(state) {}
+    ICell(bool alive = false) : state(alive) {}
+    virtual ~ICell() = default;
 
-    bool isAlive() const { return alive; }
-
-    void setAlive(bool state) { alive = state; }
+    virtual bool isAlive() const = 0;
+    virtual void setAlive(bool alive) = 0;
+    virtual void updateState(int aliveNeighbors) = 0;
 };
 
-class CellObstacle {
+class CellClassic : public ICell {
+public:
+    CellClassic(bool alive = false) : ICell(alive) {}
 
+    bool isAlive() const override { return state; }
+    void setAlive(bool alive) override { state = alive; }
+    void updateState(int aliveNeighbors) override {
+        state = isAlive() ? (aliveNeighbors == 2 || aliveNeighbors == 3) : (aliveNeighbors == 3);
+    }
 };
+
+class CellObstacle : public ICell {
+    CellObstacle(bool alive = false) : ICell(alive) {}
+
+    bool isAlive() const override { return state; }
+    void setAlive(bool alive) override { state = alive; }
+    void updateState(int aliveNeighbors) override {}
+};
+
+#endif

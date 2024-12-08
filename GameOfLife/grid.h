@@ -1,101 +1,115 @@
-class Grid {
-protected:
-    const int rows, columns;
-    int generations;
-    std::string fileName;
-    std::vector<std::vector<Cell>> grid(rows, std::vector<Cell>(columns));
+#ifndef GRID_H
+#define GRID_H
 
-    int countAliveNeighbors();
-    int countAliveNeighborsToroidal();
+#include "cell.h"
+
+class IGrid {
+protected:
+    int rows, columns;
+    std::vector<std::vector<CellClassic>> grid;
 
 public:
-    Grid();
-    ~Grid();
+    IGrid(int rows, int columns) : rows(rows), columns(columns), grid(rows, std::vector<CellClassic>(columns)) {}
+    virtual ~IGrid() = default;
 
-    void inputFile() {
-        std::ifstream file(fileName);
-        if (!file) {
-            std::cerr << "Erreur: impossible d'ouvrir le fichier " << fileName << std::endl;
+    virtual int getRows() const = 0;
+    virtual int getColumns() const = 0;
+    virtual void setCellState(int x, int y, bool state) = 0;
+    virtual bool getCellState(int x, int y) const = 0;
+    virtual void update() = 0;
+    virtual int countAliveNeighbors(int x, int y) const = 0;
+};
+
+class GridClassic : public IGrid {
+public:
+    GridClassic(int rows, int columns) : IGrid(rows, columns) {}
+
+    int getRows() const override { return rows; }
+    int getColumns() const override { return columns; }
+
+    void setCellState(int x, int y, bool state) override {
+        if (x >= 0 && x < rows && y >= 0 && y < columns) {
+            grid[x][y].setAlive(state);
         }
-
-        file >> rows >> columns;
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                file >> grid[i][j];
-            }
-        }
-
-        file.close();
     }
 
-    void initializeGrid();
-    void updateGrid();
+    bool getCellState(int x, int y) const override {
+        if (x >= 0 && x < rows && y >= 0 && y < columns) {
+            return grid[x][y].isAlive();
+        }
+        return false;
+    }
+
+    void update() override {
+        auto nextState = grid;
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                int neighbors = countAliveNeighbors(i, j);
+                nextState[i][j].updateState(neighbors);
+            }
+        }
+        grid = nextState;
+    }
+
+    int countAliveNeighbors(int x, int y) const override {
+        int count = 0;
+        for (int dx = -1; dx <= 1; ++dx) {
+            for (int dy = -1; dy <= 1; ++dy) {
+                if (dx == 0 && dy == 0) continue;
+                int nx = x + dx, ny = y + dy;
+                if (nx >= 0 && nx < rows && ny >= 0 && ny < columns) {
+                    count += grid[nx][ny].isAlive();
+                }
+            }
+        }
+        return count;
+    }
 };
 
-class GridConsole : public Grid {
-private:
-
+class GridToroidal : public IGrid {
 public:
-    GridConsole();
-    ~GridConsole();
+    GridToroidal(int rows, int columns) : IGrid(rows, columns) {}
 
-    void outputFile();
+    int getRows() const override { return rows; }
+    int getColumns() const override { return columns; }
+
+    void setCellState(int x, int y, bool state) override {
+        if (x >= 0 && x < rows && y >= 0 && y < columns) {
+            grid[x][y].setAlive(state);
+        }
+    }
+
+    bool getCellState(int x, int y) const override {
+        if (x >= 0 && x < rows && y >= 0 && y < columns) {
+            return grid[x][y].isAlive();
+        }
+        return false;
+    }
+
+    void update() override {
+        auto nextState = grid;
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                int neighbors = countAliveNeighbors(i, j);
+                nextState[i][j].updateState(neighbors);
+            }
+        }
+        grid = nextState;
+    }
+
+    int countAliveNeighbors(int x, int y) const override {
+        int count = 0;
+        for (int di = -1; di <= 1; ++di) {
+            for (int dj = -1; dj <= 1; ++dj) {
+                if (di == 0 && dj == 0) 
+                    continue;
+                int ni = (x + di + rows) % rows;
+                int nj = (y + dj + columns) % columns;
+                count += grid[ni][nj].isAlive();
+            }
+        }
+        return count;   
+    }
 };
 
-class GridGraphic : public Grid {
-private:
-    const int cellSize;
-    int sleepTime;
-    std::vector<std::vector<int>> grid(gridWidth, std::vector<int>(gridHeight));
-
-public:
-    GridGraphic();
-    ~GridGraphic();
-
-    void renderGrid();
-};
-
-
-// int Detection(int i,int j, int n,int m){            //ce sera surement dans une classe Grid
-// // n = gridHeigth, m = gridWidth
-//     //check si c'est premirère u denrière ligne et/ou colonne)
-//     int cell_select = grid[i][j]; 
-//     int compteur = 0;
-
-//     if (i==0){
-//         if (j==0){
-//             compteur = grid[n-1][m-1] + grid[n-1][j] + grid[n-1][j+1] + grid[i][m-1] + grid[i][j+1] + grid[i+1][m-1] + grid[i+1][j] + grid[i+1][j+1];
-//         }
-
-//         else if (j==n-1)
-//         {
-//             compteur = grid[n-1][j-1] + grid[n-1][j] + grid[n-1][0] + grid[i][j-1] + grid[i][0] + grid[i+1][j-1] + grid[i+1][j] + grid[i+1][0];
-//         }
-
-//         else{
-//             compteur = grid[n-1][j-1] + grid[n-1][j] + grid[n-1][j+1] + grid[i][j-1] + grid[i][j+1] + grid[i+1][j-1] + grid[i+1][j] + grid[i+1][j+1];
-//         } 
-//     }
-
-//     else if (i==(n-1))
-//     {
-//         if (j==0){
-//             compteur = grid[i-1][m-1] + grid[i-1][j] + grid[i-1][j+1] + grid[i][m-1] + grid[i][j+1] + grid[0][m-1] + grid[0][j] + grid[0][j+1];
-//         }
-
-//         else if (j==n-1)
-//         {
-//             compteur = grid[i-1][j-1] + grid[i-1][j] + grid[i-1][0] + grid[i][j-1] + grid[i][0] + grid[0][j-1] + grid[0][j] + grid[0][0];
-//         }
-//         else{
-//             compteur = grid[i-1][j-1] + grid[i-1][j] + grid[i-1][j+1] + grid[i][j-1] + grid[i][j+1] + grid[0][j-1] + grid[0][j] + grid[0][j+1];
-//         } 
-//     }
-
-//     else {
-//         compteur = grid[i-1][j-1] + grid[i-1][j] + grid[i-1][j+1] + grid[i][j-1] + grid[i][j+1] + grid[i+1][j-1] + grid[i+1][j] + grid[i+1][j+1];
-//     }
-    
-//     return compteur;    
-// }
+#endif
