@@ -29,7 +29,7 @@ public:
     }
 
     bool hasReachedLimit() const override {
-        return currentGeneration >= maxGenerations;
+        return currentGeneration > maxGenerations;
     }
 
     bool isStable(const IGrid& grid) override {
