@@ -1,6 +1,10 @@
 #ifndef ITER_H
 #define ITER_H
 
+#include "headers.h"
+
+class IGrid;
+
 class IIteration {
 protected:
     int maxGenerations;
@@ -23,37 +27,15 @@ private:
 public:
     IterationClassic(int maxGenerations) : IIteration(maxGenerations) {}
 
-    void reset() override {
-        currentGeneration = 0;
-        previousState.clear();
-    }
+    void reset() override;
 
-    bool hasReachedLimit() const override {
-        return currentGeneration > maxGenerations;
-    }
+    bool hasReachedLimit() const override;
 
-    bool isStable(const IGrid& grid) override {
-        std::vector<std::vector<bool>> currentState(grid.getRows(), std::vector<bool>(grid.getColumns()));
+    bool isStable(const IGrid& grid) override;
 
-        for (int i = 0; i < grid.getRows(); ++i) {
-            for (int j = 0; j < grid.getColumns(); ++j) {
-                currentState[i][j] = grid.getCellState(i, j);
-            }
-        }
+    bool canContinue(const IGrid& grid) override;
 
-        bool stable = (currentState == previousState);
-        previousState = std::move(currentState);
-        return stable;
-    }
-
-    bool canContinue(const IGrid& grid) override {
-        currentGeneration++;
-        return !hasReachedLimit() && !isStable(grid);
-    }
-
-    int getCurrentGeneration() const override {
-        return currentGeneration;
-    }
+    int getCurrentGeneration() const override;
 };
 
 #endif

@@ -18,19 +18,17 @@ class CellClassic : public ICell {
 public:
     CellClassic(bool alive = false) : ICell(alive) {}
 
-    bool isAlive() const override { return state; }
-    void setAlive(bool alive) override { state = alive; }
-    void updateState(int aliveNeighbors) override {
-        state = isAlive() ? (aliveNeighbors == 2 || aliveNeighbors == 3) : (aliveNeighbors == 3);
-    }
+    bool isAlive() const override;
+    void setAlive(bool alive) override;
+    void updateState(int aliveNeighbors) override;
 };
 
 class CellObstacle : public ICell {
     CellObstacle(bool alive = false) : ICell(alive) {}
 
-    bool isAlive() const override { return state; }
-    void setAlive(bool alive) override { state = alive; }
-    void updateState(int aliveNeighbors) override {}
+    bool isAlive() const override;
+    void setAlive(bool alive) override;
+    void updateState(int aliveNeighbors) override{}
 };
 
 #endif
