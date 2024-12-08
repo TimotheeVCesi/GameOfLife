@@ -45,7 +45,7 @@ void configVar(IIteration*& iterations, int& generations, int& sleepTime, int& v
     std::cin >> sleepTime;
 }
 
-void testGrid(IGrid*& initialGrid, IGrid*& grid, int generations, int viewType) {
+void testGrid(IGrid*& initialGrid, IGrid*& grid, int generations, int gridType) {
     std::cout << "Test de validation de la grille :" << std::endl;
     std::vector<std::vector<bool>> testGridState = initialGrid->getGridState();
     std::vector<std::vector<bool>> finalGridState = grid->getGridState();
@@ -65,11 +65,11 @@ void testGrid(IGrid*& initialGrid, IGrid*& grid, int generations, int viewType) 
                         int nx = x + dx;
                         int ny = y + dy;
 
-                        if (viewType == 1) {
+                        if (gridType == 1) {
                             if (nx >= 0 && nx < rows && ny >= 0 && ny < columns) {
                                 neighbors += testGridState[nx][ny];
                             }
-                        } else if (viewType == 2) {
+                        } else if (gridType == 2) {
                             nx = (nx + rows) % rows;
                             ny = (ny + columns) % columns;
                             neighbors += testGridState[nx][ny];
@@ -120,7 +120,7 @@ int main() {
     GameOfLife game(fileHandler, grid, view, iterations, viewType);
     game.run(sleepTime);
 
-    testGrid(initialGrid, grid, generations, viewType);
+    testGrid(initialGrid, grid, generations, gridType);
 
     delete fileHandler;
     delete grid;
