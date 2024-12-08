@@ -26,7 +26,11 @@ public:
 };
 
 class CellObstacle : public ICell {
+    CellObstacle(bool alive = false) : ICell(alive) {}
 
+    bool isAlive() const override { return state; }
+    void setAlive(bool alive) override { state = alive; }
+    void updateState(int aliveNeighbors) override {}
 };
 
 #endif
