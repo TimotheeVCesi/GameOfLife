@@ -1,18 +1,14 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <ctime>
 #include <string>
-#include <SFML/Graphics.hpp>
-#include <fstream>
-#include <sstream>
+#include <thread>
 #include <chrono>
-#include <filesystem>
+#include <vector>
+#include <fstream>
 #include <stdexcept>
 #include <sys/stat.h>
-#include <thread>
+#include <SFML/Graphics.hpp>
 
 namespace fs = std::filesystem;
 
