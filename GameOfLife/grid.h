@@ -19,6 +19,7 @@ public:
     virtual void update() = 0;
     virtual int countAliveNeighbors(int x, int y) const = 0;
     virtual void copyFrom(const IGrid& other) = 0;
+    virtual std::vector<std::vector<bool>> getGridState() const = 0;
 };
 
 class GridClassic : public IGrid {
@@ -73,6 +74,16 @@ public:
             }
         }
     }
+
+    std::vector<std::vector<bool>> getGridState() const override {
+        std::vector<std::vector<bool>> gridState(rows, std::vector<bool>(columns));
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                gridState[i][j] = grid[i][j].isAlive();
+            }
+        }
+        return gridState;
+    }
 };
 
 class GridToroidal : public IGrid {
@@ -126,6 +137,16 @@ public:
                 this->grid[i][j] = other.getCellState(i, j) ? CellClassic(true) : CellClassic(false);
             }
         }
+    }
+
+    std::vector<std::vector<bool>> getGridState() const override {
+        std::vector<std::vector<bool>> gridState(rows, std::vector<bool>(columns));
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                gridState[i][j] = grid[i][j].isAlive();
+            }
+        }
+        return gridState;
     }
 };
 

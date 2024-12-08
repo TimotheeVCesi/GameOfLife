@@ -17,7 +17,7 @@ public:
 
 class FileHandler : public IFileHandler {
 private:
-    mutable int count = 1;
+    mutable int count = 0;
 
 public:
     FileHandler(std::string filePath) : IFileHandler(filePath) {}

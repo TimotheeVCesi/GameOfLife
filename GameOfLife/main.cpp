@@ -49,15 +49,38 @@ void configVar(IIteration*& iterations, int& generations, int& sleepTime, int& v
     std::cin >> sleepTime;
 }
 
-// bool testGrid(IGrid*& initialGrid, IGrid*& grid, int& generations) {
-//     std::cout << "Test de validation de la grille :" << std::endl;
-    
-//     IGrid* gridTest = initialGrid;
+void testGrid(IGrid*& initialGrid, IGrid*& grid, int& generations) {
+    std::cout << "Test de validation de la grille :" << std::endl;
+    std::vector<std::vector<bool>> testGridState = initialGrid->getGridState();
+    std::vector<std::vector<bool>> finalGridState = grid->getGridState();
 
-//     for (int i = 0; i < generations; i++) {
-        
-//     }
-// }
+    for (int i = 0; i < generations; i++) {
+        std::vector<std::vector<bool>> nextState = testGridState;
+
+        for (int x = 0; x < initialGrid->getRows(); x++) {
+            for (int y = 0; y < initialGrid->getColumns(); y++) {
+                int neighbors = 0;
+                for (int dx = -1; dx <= 1; ++dx) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        if (dx == 0 && dy == 0) continue;
+                        int nx = x + dx, ny = y + dy;
+                        if (nx >= 0 && nx < initialGrid->getRows() && ny >= 0 && ny < initialGrid->getColumns()) {
+                            neighbors += testGridState[nx][ny];
+                        }
+                    }
+                }
+                nextState[x][y] = (testGridState[x][y]) ? (neighbors == 2 || neighbors == 3) : (neighbors == 3);
+            }
+        }
+        testGridState = nextState;
+    }
+
+    for (size_t i = 0; i < testGridState.size(); ++i)
+        for (size_t j = 0; j < testGridState[i].size(); ++j)
+            if (testGridState[i][j] != finalGridState[i][j])
+                throw std::runtime_error("Test unitaire: la grille n'est pas valide");
+    std::cout << "Test unitaire: la grille est valide" << std::endl;
+}
 
 int main() {
     IFileHandler* fileHandler = nullptr;
@@ -65,6 +88,7 @@ int main() {
 
     IGrid* grid = fileHandler->load();
     configGridType(grid, grid->getRows(), grid->getColumns());
+    auto* initialGrid = grid;
 
     IView* view = nullptr;
     int viewType;
@@ -77,7 +101,7 @@ int main() {
     GameOfLife game(fileHandler, grid, view, iterations, viewType);
     game.run(sleepTime);
 
-    // testGrid(initialGrid, grid, generations);
+    testGrid(initialGrid, grid, generations);
 
     delete fileHandler;
     delete grid;
