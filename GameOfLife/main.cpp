@@ -60,7 +60,7 @@ int main() {
     int sleepTime;
     configVar(iterations, sleepTime, viewType);
 
-    GameOfLife game(fileHandler, grid, view, iterations, viewType);
+    GameOfLife game(fileHandler, initialGrid, view, iterations, viewType);
     game.run(sleepTime);
 
     delete fileHandler;

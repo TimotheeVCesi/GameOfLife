@@ -20,7 +20,6 @@ public:
                 : fileHandler(fileHandler), grid(grid), view(view), iterations(iterations), viewType(viewType) {}
 
     void run(int sleepTime) {
-        grid = fileHandler->load();
         while (iterations->canContinue(*grid)) {
             if (viewType == 1) {
                 fileHandler->save(*grid);
