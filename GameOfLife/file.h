@@ -4,19 +4,26 @@
 #include "grid.h"
 
 class IFileHandler {
+protected:
+    std::string filePath;
+
 public:
+    IFileHandler(std::string filePath) : filePath(filePath) {}
     virtual ~IFileHandler() = default;
-    virtual IGrid* load(const std::string& filePath) const = 0;
-    virtual void save(const IGrid& grid, const std::string& filePath) const = 0;
+
+    virtual IGrid* load() const = 0;
+    virtual void save(const IGrid& grid) const = 0;
 };
 
 class FileHandler : public IFileHandler {
 private:
-    mutable int count = 0;
+    mutable int count = 1;
 
 public:
-    IGrid* load(const std::string& filePath) const override {
-        std::ifstream file(filePath);
+    FileHandler(std::string filePath) : IFileHandler(filePath) {}
+
+    IGrid* load() const override {
+        std::ifstream file(filePath, std::ios::in);
         if (!file.is_open()) {
             throw std::runtime_error("Erreur: impossible d'ouvrir le fichier pour charger");
         }
@@ -44,20 +51,20 @@ public:
         return grid;
     }
 
-    void save(const IGrid& grid, const std::string& filePath) const override {
+    void save(const IGrid& grid) const override {
         std::size_t posSlash = filePath.find_last_of('/');
         std::size_t posExt = filePath.find_last_of('.');
-        std::string folderPath = filePath.substr(0, posSlash);
+        std::string folderPath = filePath.substr(0, posSlash + 1);
         std::string fileName = filePath.substr(posSlash + 1, posExt);
         std::string folderName = fileName + "_out";
+        std::string folder = folderPath + folderName;
+        std::string OutFilePath = folderPath + folderName + "/iteration_" + std::to_string(count) + ".txt";
 
-        if (mkdir(folderName.c_str(), 0755) != 0 && errno != EEXIST) {
+        if (mkdir(folder.c_str(), 0755) != 0 && errno != EEXIST) {
             throw std::runtime_error("Erreur: impossible de créer le dossier de sauvegarde");
         }
 
-        std::string OutFilePath = folderPath + "/" + folderName + "/iteration_" + std::to_string(count) + ".txt";
-
-        std::ofstream file(OutFilePath);
+        std::ofstream file(OutFilePath, std::ios::out | std::ios::trunc);
         if (!file.is_open()) {
             throw std::runtime_error("Erreur: impossible d'ouvrir le fichier pour sauvegarder");
         }
