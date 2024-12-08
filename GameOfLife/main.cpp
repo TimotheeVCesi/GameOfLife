@@ -1,11 +1,14 @@
 #include "headers.h"
 
-void inputFile(std::string& filePath) {
+void inputFile(IFileHandler*& fileHandler) {
+    std::string filePath;
     std::cout << "Entrez le chemin d'accès au fichier d'entrée :" << std::endl;
     std::cin >> filePath;
+    fileHandler = new FileHandler(filePath);
 }
 
-void configGridType(IGrid*& grid, int& gridType, int rows, int columns) {
+void configGridType(IGrid*& grid, int rows, int columns) {
+    int gridType;
     std::cout << "Entrez le type de la grille ('1' pour classique, '2' pour torique) :" << std::endl;
     std::cin >> gridType;
 
@@ -23,38 +26,48 @@ void configGridType(IGrid*& grid, int& gridType, int rows, int columns) {
     }
 }
 
-int main() {
-    IFileHandler* fileHandler = new FileHandler();
+void configViewType(IView*& view, int& viewType) {
+    std::cout << "Entrez le type de vue ('1' pour console, '2' pour graphique) :" << std::endl;
+    std::cin >> viewType;
 
-    std::string filePath;
-    inputFile(filePath);
+    view = new ViewGraphic();
+}
 
-    IGrid* initialGrid = fileHandler->load(filePath);
-
-    int gridType;
-    IGrid* grid = nullptr;
-    configGridType(grid, gridType, initialGrid->getRows(), initialGrid->getColumns());
-
-    int cellSize = 10;
-    sf::RenderWindow window(sf::VideoMode(grid->getColumns() * cellSize, grid->getRows() * cellSize), "Game of Life");
-
-    IView* view = new ViewGraphic(window, cellSize);
-
+void configVar(IIteration*& iterations, int& sleepTime, int& viewType) {
     int generations;
     std::cout << "Entrez le nombre de générations maximum :" << std::endl;
     std::cin >> generations;
-    IIteration* iterations = new IterationClassic(generations);
+    iterations = new IterationClassic(generations);
 
-    int sleepTime;
     std::cout << "Entrez le temps de pause entre deux itérations (en ms) :" << std::endl;
     std::cin >> sleepTime;
+}
 
-    GameOfLife game(grid, view, iterations);
+int main() {
+    IFileHandler* fileHandler = nullptr;
+    inputFile(fileHandler);
+
+    IGrid* initialGrid = fileHandler->load();
+    
+    IGrid* grid = nullptr;
+    configGridType(grid, initialGrid->getRows(), initialGrid->getColumns());
+
+    IView* view = nullptr;
+    int viewType;
+    configViewType(view, viewType);
+
+    IIteration* iterations = nullptr;
+    int sleepTime;
+    configVar(iterations, sleepTime, viewType);
+
+    GameOfLife game(fileHandler, grid, view, iterations, viewType);
     game.run(sleepTime);
 
+    delete fileHandler;
+    delete initialGrid;
     delete grid;
     delete view;
-    delete fileHandler;
+    delete iterations;
 
     return 0;
 }
