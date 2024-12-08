@@ -12,18 +12,25 @@ void configGridType(IGrid*& grid, int rows, int columns) {
     std::cout << "Entrez le type de la grille ('1' pour classique, '2' pour torique) :" << std::endl;
     std::cin >> gridType;
 
+    IGrid* newGrid = nullptr;
     switch (gridType) {
         case 1:
-            grid = new GridClassic(rows, columns);
+            newGrid = new GridClassic(rows, columns);
             break;
         case 2:
-            grid = new GridToroidal(rows, columns);
+            newGrid = new GridToroidal(rows, columns);
             break;
         default:
             std::cerr << "Erreur: entrée inconnue (type de la grille). Grille classique utilisée par défaut." << std::endl;
-            grid = new GridClassic(rows, columns);
+            newGrid = new GridClassic(rows, columns);
             break;
     }
+
+    if (grid) {
+        newGrid->copyFrom(*grid);
+        delete grid;
+    }
+    grid = newGrid;
 }
 
 void configViewType(IView*& view, int& viewType) {
@@ -33,8 +40,7 @@ void configViewType(IView*& view, int& viewType) {
     view = new ViewGraphic();
 }
 
-void configVar(IIteration*& iterations, int& sleepTime, int& viewType) {
-    int generations;
+void configVar(IIteration*& iterations, int& generations, int& sleepTime, int& viewType) {
     std::cout << "Entrez le nombre de générations maximum :" << std::endl;
     std::cin >> generations;
     iterations = new IterationClassic(generations);
@@ -43,28 +49,37 @@ void configVar(IIteration*& iterations, int& sleepTime, int& viewType) {
     std::cin >> sleepTime;
 }
 
+// bool testGrid(IGrid*& initialGrid, IGrid*& grid, int& generations) {
+//     std::cout << "Test de validation de la grille :" << std::endl;
+    
+//     IGrid* gridTest = initialGrid;
+
+//     for (int i = 0; i < generations; i++) {
+        
+//     }
+// }
+
 int main() {
     IFileHandler* fileHandler = nullptr;
     inputFile(fileHandler);
 
-    IGrid* initialGrid = fileHandler->load();
-    
-    IGrid* grid = nullptr;
-    configGridType(grid, initialGrid->getRows(), initialGrid->getColumns());
+    IGrid* grid = fileHandler->load();
+    configGridType(grid, grid->getRows(), grid->getColumns());
 
     IView* view = nullptr;
     int viewType;
     configViewType(view, viewType);
 
     IIteration* iterations = nullptr;
-    int sleepTime;
-    configVar(iterations, sleepTime, viewType);
+    int generations, sleepTime;
+    configVar(iterations, generations, sleepTime, viewType);
 
-    GameOfLife game(fileHandler, initialGrid, view, iterations, viewType);
+    GameOfLife game(fileHandler, grid, view, iterations, viewType);
     game.run(sleepTime);
 
+    // testGrid(initialGrid, grid, generations);
+
     delete fileHandler;
-    delete initialGrid;
     delete grid;
     delete view;
     delete iterations;
