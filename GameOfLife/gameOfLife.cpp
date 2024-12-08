@@ -2,6 +2,7 @@
 
 void GameOfLife::run(int sleepTime) {
     while (iterations->canContinue(*grid)) {
+        grid->update();
         if (viewType == 1) {
             fileHandler->save(*grid);
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
@@ -12,6 +13,5 @@ void GameOfLife::run(int sleepTime) {
             view->display(*grid, window, cellSize);
             sf::sleep(sf::milliseconds(sleepTime));
         }
-        grid->update();
     }
 }

@@ -58,7 +58,7 @@ std::vector<std::vector<bool>> GridClassic::getGridState() const{
     std::vector<std::vector<bool>> gridState(rows, std::vector<bool>(columns));
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j) {
-            gridState[i][j] = grid[i][j].isAlive();
+            gridState[i][j] = getCellState(i, j);
         }
     }
     return gridState;
@@ -122,7 +122,7 @@ std::vector<std::vector<bool>> GridToroidal::getGridState() const{
     std::vector<std::vector<bool>> gridState(rows, std::vector<bool>(columns));
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j) {
-            gridState[i][j] = grid[i][j].isAlive();
+            gridState[i][j] = getCellState(i, j);
         }
     }
     return gridState;

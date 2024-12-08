@@ -7,11 +7,7 @@ void inputFile(IFileHandler*& fileHandler) {
     fileHandler = new FileHandler(filePath);
 }
 
-void configGridType(IGrid*& grid, int rows, int columns) {
-    int gridType;
-    std::cout << "Entrez le type de la grille ('1' pour classique, '2' pour torique) :" << std::endl;
-    std::cin >> gridType;
-
+void configGridType(IGrid*& grid, int gridType, int rows, int columns) {
     IGrid* newGrid = nullptr;
     switch (gridType) {
         case 1:
@@ -62,38 +58,38 @@ void testGrid(IGrid*& initialGrid, IGrid*& grid, int generations, int viewType) 
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < columns; y++) {
                 int neighbors = 0;
-                if (viewType == 1) {
-                    for (int dx = -1; dx <= 1; ++dx) {
-                        for (int dy = -1; dy <= 1; ++dy) {
-                            if (dx == 0 && dy == 0) continue;
-                            int nx = x + dx, ny = y + dy;
+                for (int dx = -1; dx <= 1; ++dx) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        if (dx == 0 && dy == 0) continue;
+
+                        int nx = x + dx;
+                        int ny = y + dy;
+
+                        if (viewType == 1) {
                             if (nx >= 0 && nx < rows && ny >= 0 && ny < columns) {
                                 neighbors += testGridState[nx][ny];
                             }
+                        } else if (viewType == 2) {
+                            nx = (nx + rows) % rows;
+                            ny = (ny + columns) % columns;
+                            neighbors += testGridState[nx][ny];
+                        } else {
+                            throw std::runtime_error("Test unitaire: erreur: la vue spécifiée est invalide");
                         }
                     }
-                } else if (viewType == 2) {
-                    for (int di = -1; di <= 1; ++di) {
-                        for (int dj = -1; dj <= 1; ++dj) {
-                            if (di == 0 && dj == 0) 
-                                continue;
-                            int ni = (x + di + rows) % rows;
-                            int nj = (y + dj + columns) % columns;
-                            neighbors += testGridState[ni][nj];
-                        }
-                    }
-                } else {
-                    throw std::runtime_error("Test unitaire: erreur: la vue spécifiée est invalide");
                 }
-                
-                nextState[x][y] = (testGridState[x][y]) ? (neighbors == 2 || neighbors == 3) : (neighbors == 3);
+                if (testGridState[x][y]) {
+                    nextState[x][y] = (neighbors == 2 || neighbors == 3);
+                } else {
+                    nextState[x][y] = (neighbors == 3);
+                }
             }
         }
         testGridState = nextState;
     }
 
-    for (size_t i = 0; i < testGridState.size(); ++i)
-        for (size_t j = 0; j < testGridState[i].size(); ++j)
+    for (int i = 0; i < rows; ++i)
+        for (size_t j = 0; j < columns; ++j)
             if (testGridState[i][j] != finalGridState[i][j])
                 throw std::runtime_error("Test unitaire: la grille n'est pas valide");
     std::cout << "Test unitaire: la grille est valide" << std::endl;
@@ -103,9 +99,15 @@ int main() {
     IFileHandler* fileHandler = nullptr;
     inputFile(fileHandler);
 
+    int gridType;
+    std::cout << "Entrez le type de la grille ('1' pour classique, '2' pour torique) :" << std::endl;
+    std::cin >> gridType;
+
     IGrid* grid = fileHandler->load();
-    configGridType(grid, grid->getRows(), grid->getColumns());
-    auto* initialGrid = grid;
+    configGridType(grid, gridType, grid->getRows(), grid->getColumns());
+
+    IGrid* initialGrid = fileHandler->load();
+    configGridType(initialGrid, gridType, initialGrid->getRows(), initialGrid->getColumns());
 
     IView* view = nullptr;
     int viewType;
@@ -122,6 +124,7 @@ int main() {
 
     delete fileHandler;
     delete grid;
+    delete initialGrid;
     delete view;
     delete iterations;
 
