@@ -18,6 +18,7 @@ public:
     virtual bool getCellState(int x, int y) const = 0;
     virtual void update() = 0;
     virtual int countAliveNeighbors(int x, int y) const = 0;
+    virtual void copyFrom(const IGrid& other) = 0;
 };
 
 class GridClassic : public IGrid {
@@ -64,6 +65,14 @@ public:
         }
         return count;
     }
+
+    void copyFrom(const IGrid& other) override {
+        for (int i = 0; i < getRows(); ++i) {
+            for (int j = 0; j < getColumns(); ++j) {
+                this->grid[i][j] = other.getCellState(i, j) ? CellClassic(true) : CellClassic(false);
+            }
+        }
+    }
 };
 
 class GridToroidal : public IGrid {
@@ -109,6 +118,14 @@ public:
             }
         }
         return count;   
+    }
+
+    void copyFrom(const IGrid& other) override {
+        for (int i = 0; i < getRows(); ++i) {
+            for (int j = 0; j < getColumns(); ++j) {
+                this->grid[i][j] = other.getCellState(i, j) ? CellClassic(true) : CellClassic(false);
+            }
+        }
     }
 };
 
