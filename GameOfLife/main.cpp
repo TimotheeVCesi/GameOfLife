@@ -49,26 +49,43 @@ void configVar(IIteration*& iterations, int& generations, int& sleepTime, int& v
     std::cin >> sleepTime;
 }
 
-void testGrid(IGrid*& initialGrid, IGrid*& grid, int& generations) {
+void testGrid(IGrid*& initialGrid, IGrid*& grid, int generations, int viewType) {
     std::cout << "Test de validation de la grille :" << std::endl;
     std::vector<std::vector<bool>> testGridState = initialGrid->getGridState();
     std::vector<std::vector<bool>> finalGridState = grid->getGridState();
+    int rows = initialGrid->getRows();
+    int columns = initialGrid->getColumns();
 
     for (int i = 0; i < generations; i++) {
         std::vector<std::vector<bool>> nextState = testGridState;
 
-        for (int x = 0; x < initialGrid->getRows(); x++) {
-            for (int y = 0; y < initialGrid->getColumns(); y++) {
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < columns; y++) {
                 int neighbors = 0;
-                for (int dx = -1; dx <= 1; ++dx) {
-                    for (int dy = -1; dy <= 1; ++dy) {
-                        if (dx == 0 && dy == 0) continue;
-                        int nx = x + dx, ny = y + dy;
-                        if (nx >= 0 && nx < initialGrid->getRows() && ny >= 0 && ny < initialGrid->getColumns()) {
-                            neighbors += testGridState[nx][ny];
+                if (viewType == 1) {
+                    for (int dx = -1; dx <= 1; ++dx) {
+                        for (int dy = -1; dy <= 1; ++dy) {
+                            if (dx == 0 && dy == 0) continue;
+                            int nx = x + dx, ny = y + dy;
+                            if (nx >= 0 && nx < rows && ny >= 0 && ny < columns) {
+                                neighbors += testGridState[nx][ny];
+                            }
                         }
                     }
+                } else if (viewType == 2) {
+                    for (int di = -1; di <= 1; ++di) {
+                        for (int dj = -1; dj <= 1; ++dj) {
+                            if (di == 0 && dj == 0) 
+                                continue;
+                            int ni = (x + di + rows) % rows;
+                            int nj = (y + dj + columns) % columns;
+                            neighbors += testGridState[ni][nj];
+                        }
+                    }
+                } else {
+                    throw std::runtime_error("Test unitaire: erreur: la vue spécifiée est invalide");
                 }
+                
                 nextState[x][y] = (testGridState[x][y]) ? (neighbors == 2 || neighbors == 3) : (neighbors == 3);
             }
         }
@@ -101,7 +118,7 @@ int main() {
     GameOfLife game(fileHandler, grid, view, iterations, viewType);
     game.run(sleepTime);
 
-    testGrid(initialGrid, grid, generations);
+    testGrid(initialGrid, grid, generations, viewType);
 
     delete fileHandler;
     delete grid;
